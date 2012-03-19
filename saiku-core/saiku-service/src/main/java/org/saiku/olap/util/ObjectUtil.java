@@ -41,12 +41,24 @@ import org.saiku.olap.dto.SaikuQuery;
 import org.saiku.olap.dto.SaikuSelection;
 import org.saiku.olap.dto.SaikuSelection.Type;
 import org.saiku.olap.query.IQuery;
+import org.olap4j.metadata.Property;
 
 public class ObjectUtil {
 
 
 	public static SaikuDimension convert(Dimension dim) {
-		SaikuDimension sDim = new SaikuDimension(dim.getName(), dim.getUniqueName(), dim.getCaption(), dim.getDescription(), convertHierarchies(dim.getHierarchies()));
+		//SaikuDimension sDim = new SaikuDimension(dim.getName(), dim.getUniqueName(), dim.getCaption(), dim.getDescription(), convertHierarchies(dim.getHierarchies()));
+		
+		//KB: Add dimension type and description:
+		//SaikuDimension sDim = new SaikuDimension(dim.getName(), dim.getUniqueName(), dim.getCaption(), convertHierarchies(dim.getHierarchies()));
+		String dimensionType = null;
+		String description = dim.getDescription();
+		try {
+			dimensionType = (dim.getDimensionType() == null ? "" : dim.getDimensionType().toString());
+		} catch (OlapException oe) {} //ignore		
+		SaikuDimension sDim = new SaikuDimension(dim.getName(), dim.getUniqueName(), dim.getCaption(), description, dimensionType, convertHierarchies(dim.getHierarchies()));
+		//end KB
+		
 		return sDim;
 	}
 
@@ -99,12 +111,20 @@ public class ObjectUtil {
 	public static SaikuLevel convert(Level level) {
 		try {
 //			List<SaikuMember> members = convertMembers(level.getMembers());
+			/*return new SaikuLevel(
+					level.getName(), 
+					level.getUniqueName(), 
+					level.getCaption(), 
+					level.getDimension().getUniqueName(), 
+					level.getHierarchy().getUniqueName());*/
 			return new SaikuLevel(
 					level.getName(), 
 					level.getUniqueName(), 
 					level.getCaption(), 
 					level.getDimension().getUniqueName(), 
-					level.getHierarchy().getUniqueName());
+					level.getHierarchy().getUniqueName(),
+					level.getDepth(),
+					level.getCardinality());
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -155,14 +175,36 @@ public class ObjectUtil {
 	}
 
 	public static SaikuMember convert(Member m) {
-		return new SaikuMember(
+		/*return new SaikuMember(
 				m.getName(), 
 				m.getUniqueName(), 
 				m.getCaption(), 
 				m.getDescription(),
 				m.getDimension().getUniqueName(),
 				m.getHierarchy().getUniqueName(),
-				m.getLevel().getUniqueName());
+				m.getLevel().getUniqueName());*/
+		
+		//KB: Add MEMBER_KEY property:
+		//KB Add ChildMemberCount:
+		String memberKey = "";
+		int childMemberCount = 0;
+		try {
+			Object memberKeyObj = m.getPropertyValue(Property.StandardMemberProperty.MEMBER_KEY);
+			memberKey = (memberKeyObj != null ? memberKeyObj.toString() : null);			
+			childMemberCount = m.getChildMemberCount();
+		} catch (Exception e) {
+		//ignore
+		}
+		
+		return new SaikuMember(
+				m.getName(), 
+				m.getUniqueName(), 
+				m.getCaption(), 
+				m.getDimension().getUniqueName(),
+				m.getLevel().getUniqueName(),
+				memberKey,
+				childMemberCount
+				);
 	}
 	
 	public static SaikuDimensionSelection convertDimensionSelection(QueryDimension dim) {
