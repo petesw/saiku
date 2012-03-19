@@ -26,6 +26,10 @@ public class SaikuLevel extends AbstractSaikuObject {
 	private String dimensionUniqueName;
 //	private transient List<SaikuMember> members;
 	
+	//KB Adding in level depth and cardinality:
+	private int depth;
+	private int cardinality;
+	
 	public SaikuLevel() {
 		super(null,null);
 		throw new RuntimeException("Unsupported Constructor. Serialization only");
@@ -37,12 +41,16 @@ public class SaikuLevel extends AbstractSaikuObject {
 			String uniqueName, 
 			String caption, 
 			String dimensionUniqueName, 
-			String hierarchyUniqueName) 
+			String hierarchyUniqueName,
+			int depth,
+			int cardinality) 
 	{
 		super(uniqueName,name);
 		this.caption = caption;
 		this.hierarchyUniqueName = hierarchyUniqueName;
 		this.dimensionUniqueName = dimensionUniqueName;
+		this.depth = depth;
+		this.cardinality = cardinality;
 //		this.members = members;
 	}
 
@@ -56,6 +64,14 @@ public class SaikuLevel extends AbstractSaikuObject {
 	
 	public String getDimensionUniqueName() {
 		return dimensionUniqueName;
+	}
+	
+	public int getDepth() {
+		return depth;
+	}
+	
+	public int getCardinality() {
+		return cardinality;
 	}
 	
 //	public List<SaikuMember> getMembers() {
