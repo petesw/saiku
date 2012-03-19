@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 OSBI Ltd
+ * Copyright (C) 2011 Paul Stoellberger
  *
  * This program is free software; you can redistribute it and/or modify it 
  * under the terms of the GNU General Public License as published by the Free 
@@ -19,33 +19,41 @@
  */
 package org.saiku.olap.dto;
 
+//import org.olap4j.metadata.NamedList;
+//import org.olap4j.metadata.Property;
+
 public class SaikuMember extends AbstractSaikuObject {
 	
 	private String caption;
 	private String dimensionUniqueName;
-	private String description;
 	private String levelUniqueName;
-	private String hierarchyUniqueName;
+	//KB: Add MEMBER_KEY property:
+	//private NamedList<Property> properties;
+	private String memberKey;
+	//KB Add ChildMemberCount:
+	private int childMemberCount;
 	
-	public SaikuMember() {}
+	
 
-	public SaikuMember(String name, String uniqueName, String caption, String description, String dimensionUniqueName, String hierarchyUniqueName, String levelUniqueName) {
+
+	public SaikuMember() {
+		super(null,null);
+		throw new RuntimeException("Unsupported Constructor. Serialization only");
+	}
+
+	public SaikuMember(String name, String uniqueName, String caption, String dimensionUniqueName, String levelUniqueName, String memberKey, int childMemberCount) { //NamedList<Property> properties) {
 		super(uniqueName,name);
 		this.caption = caption;
-		this.description = description;
 		this.dimensionUniqueName = dimensionUniqueName;
-		this.levelUniqueName = levelUniqueName;
-		this.hierarchyUniqueName = hierarchyUniqueName;
+		//this.properties = properties;
+		this.memberKey = memberKey;
+		this.childMemberCount = childMemberCount;
 	}
 
 	public String getCaption() {
 		return caption;
 	}
-
-	public String getDescription() {
-		return description;
-	}
-
+	
 	public String getLevelUniqueName() {
 		return levelUniqueName;
 	}
@@ -53,8 +61,21 @@ public class SaikuMember extends AbstractSaikuObject {
 	public String getDimensionUniqueName() {
 		return dimensionUniqueName;
 	}
+	/*
+	public NamedList<Property> getProperties() {
+		return properties;
+	}
+	*/
+	public String getMemberKey() {
+		return memberKey;
+	}
 
-	public String getHierarchyUniqueName() {
-		return hierarchyUniqueName;
+	public void setMemberKey(String memberKey) {
+		this.memberKey = memberKey;
+	}
+	
+
+	public int getChildMemberCount() {
+		return childMemberCount;
 	}
 }
